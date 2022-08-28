@@ -49,8 +49,12 @@ namespace BewerbungenErsteller
             Console.WriteLine(CompanyAddress + "");
             Console.WriteLine(CompanyPLZ + " " + CompanyCity);
             Console.WriteLine();
-            if (CompanyRecruiterGender == "w") Console.Write("Sehr geehrte ");
-            else Console.Write("Sehr geehrter ");
+            if (CompanyRecruiterGender == "w") 
+            {
+                if (CompanyRecruiterName != "x") Console.Write("Sehr geehrte Frau ");
+                else Console.Write("Sehr geehrte "); 
+            }
+            else Console.Write("Sehr geehrter Herr ");
             if (CompanyRecruiterName == "x") Console.Write("Damen und Herren");
             else Console.Write(CompanyRecruiterName);
 
@@ -64,15 +68,11 @@ namespace BewerbungenErsteller
                 GetOtherDocuments();
             }
             else Start();
-            Console.ReadKey();
         }
         public static void GetOtherDocuments()
         {
-            string[] files = Directory.GetFiles(TemplatePath, "*.pdf");
-            foreach (string file in files)
-            {
-                File.Copy(file, SavePath + CompanyName);
-            }
+            File.Copy("I:\\Template\\zeugnis.pdf", SavePath + CompanyName + "\\zeugnis.pdf");
+            File.Copy("I:\\Template\\Praktikum Zertifikat.pdf", SavePath + CompanyName + "\\Praktikum Zertifikat.pdf");
         }
         public static void GetCV()
         {
@@ -97,7 +97,17 @@ namespace BewerbungenErsteller
             FindAndReplace(fileOpen, "{Date}", Date);
             if(CompanyRecruiterGender == "w") FindAndReplace(fileOpen, "{m/f}", "");
             else FindAndReplace(fileOpen, "{m/f}", "r");
-            if(CompanyRecruiterName != "x") FindAndReplace(fileOpen, "{Company-Recruiter-Name}", CompanyRecruiterName);
+            if (CompanyRecruiterName != "x")
+            {
+                if(CompanyRecruiterGender == "w")
+                {
+                    FindAndReplace(fileOpen, "{Company-Recruiter-Name}", $"Frau {CompanyRecruiterName}");
+                }
+                else
+                {
+                    FindAndReplace(fileOpen, "{Company-Recruiter-Name}", $"Herr {CompanyRecruiterName}");
+                }
+            }
             else FindAndReplace(fileOpen, "{Company-Recruiter-Name}", "Damen und Herren");
             document.SaveAs2(SavePath + "\\" + CompanyName + "\\Anschreiben.docx");
             fileOpen.Quit();
